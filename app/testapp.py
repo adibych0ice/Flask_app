@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for
-#from forms import registrationform, loginform
+import json
+import psycopg2
 app = Flask(__name__,template_folder="C:/Users/Public/OneDrive/Flask_app/templates",static_folder="C:/Users/Public/OneDrive/Flask_app/static")
 
 app.config['SECRET_KEY'] = 'f005dcccf0384a50035aae485cd58f30'
@@ -23,6 +24,20 @@ posts = [
         "date": "2022-03-01"
     }
 ]
+
+
+def querytablejson():
+
+    with open('C:/Users/Public/OneDrive/Flask_app/Schema_JSON.json', 'r') as file:
+        data = json.load(file)
+
+    columns = data['columns']
+
+    schemadef = data['schema']
+    temp = ','.join([j['name'] for j in columns])
+    tempstr = f"""SELECT {temp} FROM {schemadef} LIMIT 100"""
+    return tempstr
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -32,6 +47,19 @@ def home():
 def about():
   return render_template('testabout.html',title="About")
 
+@app.route('/query_table', methods=['GET'])
+def querytable():
+    sqlquery = querytablejson()
+
+    conn = psycopg2.connect(database="postgres", user="postgres", password="Tachyon_9667", host="localhost", port="5432")
+    curs = conn.cursor()
+    curs.execute(sqlquery)
+    results = curs.fetchall()
+    conn.close()
+
+    columns = [j['name'] for j in json.load(open('C:/Users/Public/OneDrive/Flask_app/Schema_JSON.json', 'r'))['columns']]
+    results_dict = [dict(zip(columns, row)) for row in results]
+    return render_template('query_results.html', results=results_dict, columns=columns)
 #@app.route("/register")
 #def register():
 #   form = registrationform()
