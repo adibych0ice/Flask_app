@@ -32,15 +32,15 @@ def home():
 def about():
   return render_template('testabout.html',title="About")
 
-@app.route("/register")
-def register():
-   form = registrationform()
-   return render_template('register.html',title='Register',form=form)
+#@app.route("/register")
+#def register():
+#   form = registrationform()
+#   return render_template('register.html',title='Register',form=form)
 
-@app.route("/login")
-def login():
-   form = loginform()
-   return render_template('login.html',title='Login',form=form)
+#@app.route("/login")
+#def login():
+#   form = loginform()
+#   return render_template('login.html',title='Login',form=form)
 
 if __name__ == '__main__':
    app.run(debug=True)
