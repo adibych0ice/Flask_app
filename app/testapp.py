@@ -1,6 +1,8 @@
 from flask import Flask, render_template, url_for
-
+from forms import registrationform, loginform
 app = Flask(__name__,template_folder="C:/Users/Public/OneDrive/Flask_app/templates",static_folder="C:/Users/Public/OneDrive/Flask_app/static")
+
+app.config['SECRET_KEY'] = 'f005dcccf0384a50035aae485cd58f30'
 posts = [
     {
         "title": "My First Blog Post",
@@ -29,5 +31,16 @@ def home():
 @app.route("/about")
 def about():
   return render_template('testabout.html',title="About")
+
+@app.route("/register")
+def register():
+   form = registrationform()
+   return render_template('register.html',title='Register',form=form)
+
+@app.route("/login")
+def login():
+   form = loginform()
+   return render_template('login.html',title='Login',form=form)
+
 if __name__ == '__main__':
    app.run(debug=True)
