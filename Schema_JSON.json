@@ -1,22 +1,26 @@
 {
-    "schema": "Users",
+    "schema": "Products",
     "columns": [
         {
             "name": "ID",
-            "type": "integer",
+            "type": "Serial",
             "primary_key": true
         },
         {
-            "name": "Name",
+            "name": "Product_name",
             "type": "string"
         },
         {
-            "name": "Email",
-            "type": "string"
+            "name": "SKU",
+            "type": "integer"
         },
         {
-            "name": "FirstImported",
+            "name": "FirstPurchaseDate",
             "type": "date"
+        },
+        {
+            "name":"Description",
+            "type": "Text"
         }
     ]
 }
