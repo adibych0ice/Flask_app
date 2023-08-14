@@ -1,0 +1,22 @@
+{
+    "schema": "Users",
+    "columns": [
+        {
+            "name": "ID",
+            "type": "integer",
+            "primary_key": true
+        },
+        {
+            "name": "Name",
+            "type": "string"
+        },
+        {
+            "name": "Email",
+            "type": "string"
+        },
+        {
+            "name": "FirstImported",
+            "type": "date"
+        }
+    ]
+}
