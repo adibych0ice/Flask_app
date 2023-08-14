@@ -9,6 +9,18 @@
         {
             "name": "name",
             "type": "string"
+        },
+        {
+            "name": "email",
+            "type": "integer"
+        },
+        {
+            "name": "address",
+            "type": "text"
+        },
+        {
+            "name":"birthdate",
+            "type": "date"
         }
     ]
 }
