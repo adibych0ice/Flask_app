@@ -1,26 +1,26 @@
 {
-    "schema": "Products",
+    "schema": "descistech.users",
     "columns": [
         {
-            "name": "ID",
-            "type": "Serial",
+            "name": "id",
+            "type": "integer",
             "primary_key": true
         },
         {
-            "name": "Product_name",
+            "name": "name",
             "type": "string"
         },
         {
-            "name": "SKU",
+            "name": "email",
             "type": "integer"
         },
         {
-            "name": "FirstPurchaseDate",
-            "type": "date"
+            "name": "address",
+            "type": "text"
         },
         {
-            "name":"Description",
-            "type": "Text"
+            "name":"birthdate",
+            "type": "date"
         }
     ]
 }
