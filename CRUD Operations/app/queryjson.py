@@ -1,7 +1,5 @@
 import json
-import getpass
 import psycopg2
-import re
 
 with open('C:/Users/Public/OneDrive/Flask_app/CRUD Operations/Schema_and_Table.json','r') as jsonfile:
     jsondat = json.load(jsonfile)
