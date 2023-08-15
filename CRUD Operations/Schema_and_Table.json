@@ -1,6 +1,8 @@
 {
     "schema": "decistech",
     "table": "users",
+    "attribute": "email",
+    "attributevalue": "ajackson@example.net",
     "columns": [
         {
             "name": "id",

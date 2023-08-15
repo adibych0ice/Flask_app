@@ -82,16 +82,16 @@ def querytable():
 
 
 @app.route('/api/upload', methods=['POST'])
-def queryjsondata():
-    jsondata = request.json
-
-    result, error = queryjsondat(jsondata) 
-
-
-    if error:
-        return jsonify({"error":error}),400
-    
-    return jsonify(result), 200
+def upload_json():
+    jsonfile = request.files['jsonfile']
+    if jsonfile and jsonfile.filename.endswith('.json'):
+        jsondata = json.load(jsonfile)
+        result, error = queryjsondat(jsondata)
+        if error:
+            return jsonify({"error":error}), 400
+        return jsonify(result), 200
+    else:
+        return jsonify({"error":"Invalid File Type uploaded"}), 400
 
 if __name__ == '__main__':
    app.run(debug=True)
