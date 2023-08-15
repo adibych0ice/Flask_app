@@ -1,9 +1,12 @@
 from flask import Flask, render_template, url_for
 import json
 import psycopg2
+#from forms import registrationform,loginform
+
 app = Flask(__name__,template_folder="C:/Users/Public/OneDrive/Flask_app/templates",static_folder="C:/Users/Public/OneDrive/Flask_app/static")
 
 app.config['SECRET_KEY'] = 'f005dcccf0384a50035aae485cd58f30'
+
 posts = [
     {
         "title": "My First Blog Post",
