@@ -1,7 +1,14 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, jsonify, request
 import json
 import psycopg2
+import sys
+
 #from forms import registrationform,loginform
+sys.path.append('C:/Users/Public/OneDrive/Flask_app/CRUD Operations/app')
+
+
+import queryjson
+from queryjson import queryjsondat
 
 app = Flask(__name__,template_folder="C:/Users/Public/OneDrive/Flask_app/templates",static_folder="C:/Users/Public/OneDrive/Flask_app/static")
 
@@ -72,6 +79,19 @@ def querytable():
 #def login():
 #   form = loginform()
 #   return render_template('login.html',title='Login',form=form)
+
+
+@app.route('/api/upload', methods=['POST'])
+def queryjsondata():
+    jsondata = request.json
+
+    result, error = queryjsondat(jsondata) 
+
+
+    if error:
+        return jsonify({"error":error}),400
+    
+    return jsonify(result), 200
 
 if __name__ == '__main__':
    app.run(debug=True)
