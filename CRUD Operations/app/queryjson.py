@@ -30,4 +30,7 @@ def queryjsondat(jsondata):
         
 # filterval = input("Enter the value for filtering: ")
 
+# ohines@example.net
 
+
+# {'schema': 'decistech', 'table': 'users', 'columns': [{'name': 'id', 'type': 'integer'}, {'name': 'name', 'type': 'character varying'}, {'name': 'email', 'type': 'character varying'}, {'name': 'address', 'type': 'text'}, {'name': 'birthdate', 'type': 'date'}]}
