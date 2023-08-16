@@ -5,7 +5,6 @@ from psycopg2.extras import DictCursor
 import datetime
 app = Flask(__name__)
 api = Api(app)
-names = {"frederick":"He is a male","8899":"This is a random number "}
 class GetTableDetails(Resource):
 
 
