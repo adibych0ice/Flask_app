@@ -6,7 +6,7 @@ import datetime
 from flask import jsonify
 app = Flask(__name__)
 
-def tabledetails(pwd,tablename,schemaname,tabname,colname,queryval):
+def tabledetails(pwd,tablename,schemaname,tabname,colname,queryval,cols,values):
         
         conn = psycopg2.connect(database = 'postgres',user='postgres',password=pwd, host='localhost',port='5432')
         curs = conn.cursor()
@@ -35,8 +35,23 @@ def tabledetails(pwd,tablename,schemaname,tabname,colname,queryval):
         #     result.append(row_dict)
         colnames = [x['columnname'] for x in collist]
         result = [{col: (value.isoformat() if isinstance(value, datetime.date) else value) for col, value in zip(colnames, row)} for row in filterresult]
-        return result, 200
+        
+        # for val in cols:
+        #     if val not in collist['columnname']:
+        #         print(f"The column {val} does not exist in the table")
+        #         return None,None,404
+        colstring = ",".join(cols)
+        placeholders = ",".join(["%s"] * len(values))
 
-result, stat_code = tabledetails("Tachyon_9667","users","decistech","users","email","ajackson@example.net")
+        insertstr = f"""INSERT INTO {schemaname}.{tablename} ({colstring}) 
+                        VALUES ({placeholders})
+                        RETURNING * """
+        
+        curs.execute(insertstr,values)
+        insertresult = curs.fetchall()
+        return result, insertresult,200
+
+result, insertresult, stat_code = tabledetails("Tachyon_9667","users","decistech","users","email","ajackson@example.net",['name','email','address','birthdate'],['Timothy Gartner','timg@example.org','123 Maple Street, Suite 200, Springfield, IL 62701','08-05-1994'])
 
 print(result)
+print(insertresult)

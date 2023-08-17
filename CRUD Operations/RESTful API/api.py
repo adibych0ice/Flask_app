@@ -32,7 +32,26 @@ class GetTableDetails(Resource):
         colnames = [x['columnname'] for x in collist]
         result = [{col: (value.isoformat() if isinstance(value, datetime.date) else value) for col, value in zip(colnames, row)} for row in filterresult]
         return result, 200
-    
+    def inserttotable(self,columns, values, connection,schemaname,tablename,collist):
+        curs = connection.cursor()
+        # for val in columns:
+        #     if val not in collist:
+        #         print(f"The column {val} does not exist in the table")
+        #         return
+
+        colstring = ",".join(columns);
+        valuestring = ",".join(["%s"] * len(values));
+        insertstr = f"""INSERT INTO {schemaname}.{tablename} ({colstring}) 
+                        VALUES ({valuestring}) 
+                        RETURNING *"""
+
+        curs.execute(insertstr,values)
+        insertresult = curs.fetchall()
+        connection.commit()
+        
+        return insertresult,200
+
+
     def get(self, password,tablename,schemaname,columnname,colfilter):
         columnlist, connection = self.tabledetails(password,tablename,schemaname)
         filterresult, statcode = self.querytable(schemaname,columnname,colfilter,connection,columnlist,tablename)
@@ -40,6 +59,11 @@ class GetTableDetails(Resource):
         return filterresult,statcode
 
 
+    def put(self,password,tablename,schemaname):
+        collist,connection = self.tabledetails(password,tablename,schemaname)
+        insertresult,statcode = self.inserttotable(['name','email','address','birthdate'],['Andrew Kazinsky','freddy@reddit.org','123 Maple Street, Suite 200, Springfield, IL 62701','08-07-1991'],connection,schemaname,tablename,collist)
+
+        return insertresult,statcode
          
 #The <> is to pass the paramater that will be passed when pinging the endpoint
 api.add_resource(GetTableDetails,'/tabdetails/<string:password>/<string:tablename>/<string:schemaname>/<string:columnname>/<string:colfilter>')
