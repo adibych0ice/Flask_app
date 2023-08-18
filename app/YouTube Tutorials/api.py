@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask_restful import Api,Resource, reqparse
+from flask_restful import Api,Resource, reqparse, abort
 
 app = Flask(__name__);
 
@@ -20,18 +20,36 @@ putargs.add_argument("views",type=int,help="No. of views the video has garnered"
 putargs.add_argument("likes",type=int,help="No. of likes the video has")
 
 videos={};
+
+def abort_ifvididnotexist(videoid):
+    if videoid not in videos:
+        abort(404,message="Video ID is not valid")
+
+
+def stopdeletevidexists(videoid):
+    if videoid in videos:
+       abort(409,message="The video already exists. DO NOT DELETE") 
+
 class Names(Resource):
     def get(self,name):
         return names[name]
 
 class ytvideos(Resource):
     def get(self, videoid):
+        abort_ifvididnotexist(videoid)
         return videos[videoid]
     
     def put(self, videoid):
+        stopdeletevidexists(videoid)
         args = putargs.parse_args()
         videos[videoid] = args;
-        return {videoid:args} 
+        return {videoid:args}, 201
+    
+    def delete(self,videoid):
+        abort_ifvididnotexist(videoid)
+        del videos[videoid]
+        return '', 204
+
 
 api.add_resource(Names,'/homepage/<string:name>')
 api.add_resource(ytvideos,'/ytvideo/<int:videoid>')

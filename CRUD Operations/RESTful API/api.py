@@ -1,30 +1,35 @@
 from flask import Flask
-from flask_restful import Resource,Api
+from flask_restful import Resource,Api, reqparse
 import psycopg2
 from psycopg2.extras import DictCursor
 import datetime
 app = Flask(__name__)
 api = Api(app)
 class GetTableDetails(Resource):
-
-
-    def tabledetails(self,pwd,tablename,schemaname):
+    def __init__(self,pwd, tablename,schemaname):
+        super().__init__()
+        self.connection = psycopg2.connect(database= 'postgres',user= 'postgres', password= pwd, host = 'localhost',port= '5432')
+        self.tablename = tablename
+        self.schemaname = schemaname
+        self.putargs = reqparse.RequestParser();
         
-        conn = psycopg2.connect(database = 'postgres',user='postgres',password=pwd, host='localhost',port='5432')
-        curs = conn.cursor()
+
+    def tabledetails(self):
+        
+        curs = self.connection.cursor()
 
         tabledetails = "SELECT column_name,data_type from information_schema.columns WHERE table_schema = %s AND table_name = %s "
-        curs.execute(tabledetails,(schemaname,tablename))
+        curs.execute(tabledetails,(self.schemaname,self.tablename))
         columns = curs.fetchall()
         collist = [{"columnname":name,"datatype":dattype}for name,dattype in columns]
-        return  collist, conn
+        return  collist
     
-    def querytable(self,schemaname,colname, queryval,conn,collist,tabname):
-        curs = conn.cursor(cursor_factory=DictCursor)
+    def querytable(self,colname, queryval,collist):
+        curs = self.connection.cursor()
 
         colstring = ",".join([i["columnname"] for i in collist])
 
-        querystring = f"SELECT {colstring} FROM {schemaname}.{tabname} WHERE {colname} = %s"
+        querystring = f"SELECT {colstring} FROM {self.schemaname}.{self.tablename} WHERE {colname} = %s"
 
         curs.execute(querystring, (queryval,))
         filterresult = curs.fetchall()
@@ -32,8 +37,8 @@ class GetTableDetails(Resource):
         colnames = [x['columnname'] for x in collist]
         result = [{col: (value.isoformat() if isinstance(value, datetime.date) else value) for col, value in zip(colnames, row)} for row in filterresult]
         return result, 200
-    def inserttotable(self,columns, values, connection,schemaname,tablename,collist):
-        curs = connection.cursor()
+    def inserttotable(self,columns, values):
+        curs = self.connection.cursor()
         # for val in columns:
         #     if val not in collist:
         #         print(f"The column {val} does not exist in the table")
@@ -41,13 +46,13 @@ class GetTableDetails(Resource):
 
         colstring = ",".join(columns);
         valuestring = ",".join(["%s"] * len(values));
-        insertstr = f"""INSERT INTO {schemaname}.{tablename} ({colstring}) 
+        insertstr = f"""INSERT INTO {self.schemaname}.{self.tablename} ({colstring}) 
                         VALUES ({valuestring}) 
                         RETURNING *"""
 
         curs.execute(insertstr,values)
         insertresult = curs.fetchall()
-        connection.commit()
+        self.connection.commit()
         
         return insertresult,200
 

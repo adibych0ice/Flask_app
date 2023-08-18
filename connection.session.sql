@@ -1,1 +1,0 @@
-SELECT * FROM information_schema.columns WHERE table_schema = 'decistech' AND table_name = 'users'
